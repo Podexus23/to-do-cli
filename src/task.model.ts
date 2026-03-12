@@ -1,7 +1,7 @@
 import path from "node:path";
 import nodeOs from "node:os";
 import fs from "node:fs/promises";
-import { isTasks, type Task } from "./types/interfaces.js";
+import { isTasks, type Task, type StatusType } from "./types/interfaces.js";
 
 const TASKS_PATH = path.resolve(nodeOs.homedir(), "tasks-app", "data.json");
 let tasksData: Task[] = [];
@@ -63,7 +63,7 @@ export async function deleteTask(id: number) {
 
 export async function updateTask(
   id: number,
-  data: { description?: string; status?: string },
+  data: { description?: string; status?: StatusType },
 ) {
   try {
     tasksData = tasksData.map((task) => {
@@ -87,7 +87,8 @@ export async function updateTask(
 
 export async function deleteAllTasks() {
   try {
-    await fs.writeFile(TASKS_PATH, JSON.stringify([]));
+    tasksData = [];
+    await fs.writeFile(TASKS_PATH, JSON.stringify(tasksData));
   } catch {
     console.error("Smth went wrong");
   }

@@ -1,7 +1,7 @@
 export interface Task {
   id: number;
   description: string;
-  status: string;
+  status: StatusType;
   createdAt: string;
   updatedAt: string;
 }
@@ -14,6 +14,7 @@ export function isTask(obj: unknown): obj is Task {
     typeof task.id === "number" &&
     typeof task.description === "string" &&
     typeof task.status === "string" &&
+    isValidStatus(task.status) &&
     typeof task.createdAt === "string" &&
     typeof task.updatedAt === "string"
   );

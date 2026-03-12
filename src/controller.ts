@@ -11,6 +11,14 @@ import { parseCommand } from "./helpers/parseCommand.js";
 import { isValidStatus, type StatusType } from "./types/interfaces.js";
 
 const rl = createInterface({ input, output });
+
+function parseId(arg: string | undefined): number | null {
+  if (arg === undefined || arg === "") return null;
+  const id = parseInt(arg.trim(), 10);
+  if (isNaN(id) || id.toString() !== arg.trim()) return null;
+  return id;
+}
+
 const commandsList = {
   exit: () => {
     console.log("bye bye");
@@ -25,7 +33,7 @@ const commandsList = {
       console.log(`${i + 1}. ${task}`);
     });
   },
-  listByStatus: async (status: string) => {
+  listByStatus: async (status: StatusType) => {
     const tasks = await getTasksData();
     const filteredView = tasks
       ?.filter((task) => task.status === status)
@@ -36,7 +44,7 @@ const commandsList = {
   },
   add: async (task: string) => {
     const res = await addTask(task);
-    console.log("Task added: " + res.description + "(id: " + res.id + ")");
+    console.log("Task added: " + res.description + " (id: " + res.id + ")");
   },
   delete: async (id: number) => {
     await deleteTask(id);
@@ -76,79 +84,52 @@ export async function applicationController() {
 
     case "add":
       if (args[0]) await commandsList.add(args[0]);
-      else console.error("you need to describe task");
+      else console.error("You need to describe task");
       break;
 
     case "delete": {
-      if (!args[0]) {
+      const id = parseId(args[0]);
+      if (id === null) {
         console.error("You need to add ID to delete");
         return true;
       }
-
-      const id = parseInt(args[0], 10);
-      if (isNaN(id) || id.toString() !== args[0].trim()) {
-        console.log("Error: ID is must be a number");
-        return;
-      }
-
       await commandsList.delete(id);
       break;
     }
     case "update": {
-      if (!args[0] || !args[1]) {
+      const id = parseId(args[0]);
+      if (id === null || !args[1]) {
         console.error("You need to add ID and description to update task");
         return true;
       }
-
-      const id = parseInt(args[0], 10);
-      if (isNaN(id) || id.toString() !== args[0].trim()) {
-        console.log("Error: ID is must be a number");
-        return;
-      }
-
       await commandsList.update(id, args[1]);
       break;
     }
     case "mark-done": {
-      if (!args[0]) {
+      const idDone = parseId(args[0]);
+      if (idDone === null) {
         console.error("You need to add ID");
         return true;
       }
-
-      const id = parseInt(args[0], 10);
-      if (isNaN(id) || id.toString() !== args[0].trim()) {
-        console.log("Error: ID is must be a number");
-        return;
-      }
-      await commandsList.mark(id, "done");
+      await commandsList.mark(idDone, "done");
       break;
     }
     case "mark-todo": {
-      if (!args[0]) {
+      const idTodo = parseId(args[0]);
+      if (idTodo === null) {
         console.error("You need to add ID");
         return true;
       }
-
-      const id = parseInt(args[0], 10);
-      if (isNaN(id) || id.toString() !== args[0].trim()) {
-        console.log("Error: ID is must be a number");
-        return;
-      }
-      await commandsList.mark(id, "todo");
+      await commandsList.mark(idTodo, "todo");
       break;
     }
     case "mark-in-progress": {
-      if (!args[0]) {
+      const idProgress = parseId(args[0]);
+      if (idProgress === null) {
         console.error("You need to add ID");
         return true;
       }
-
-      const id = parseInt(args[0], 10);
-      if (isNaN(id) || id.toString() !== args[0].trim()) {
-        console.log("Error: ID is must be a number");
-        return;
-      }
-      await commandsList.mark(id, "in-progress");
+      await commandsList.mark(idProgress, "in-progress");
       break;
     }
     case "delete-all": {
