@@ -1,14 +1,17 @@
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import eslintConfigPrettier from "eslint-config-prettier/flat";
-import { defineConfig } from "eslint/config";
+import js from '@eslint/js';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
+import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
+    ignores: ['**/package-lock.json', '**/tsconfig.json', '**/vitest.config.ts', '**/*.config.ts'],
+  },
+  {
+    files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
     plugins: { js },
-    extends: ["js/recommended"],
+    extends: ['js/recommended'],
     languageOptions: {
       globals: globals.node,
       parserOptions: {
@@ -17,7 +20,15 @@ export default defineConfig([
     },
   },
   ...tseslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        project: true,
+      },
+    },
+    extends: [...tseslint.configs.recommendedTypeChecked],
+  },
 
   eslintConfigPrettier,
 ]);

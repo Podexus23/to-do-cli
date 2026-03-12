@@ -3,17 +3,11 @@ import { stdin as input, stdout as output } from 'node:process';
 import { addTask, deleteAllTasks, deleteTask, getTasksData, updateTask } from './task.model.js';
 import { parseCommand } from './helpers/parseCommand.js';
 import { isValidStatus, type StatusType } from './types/interfaces.js';
+import { parseId } from './helpers/parseId.js';
 
 const MAX_DESC_LENGTH = 1000;
 
 const rl = createInterface({ input, output });
-
-function parseId(arg: string | undefined): number | null {
-  if (arg === undefined || arg === '') return null;
-  const id = parseInt(arg.trim(), 10);
-  if (isNaN(id) || id.toString() !== arg.trim()) return null;
-  return id;
-}
 
 const commandsList = {
   exit: () => {
