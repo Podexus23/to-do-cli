@@ -1,19 +1,15 @@
-import { createInterface } from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
-import {
-  addTask,
-  deleteAllTasks,
-  deleteTask,
-  getTasksData,
-  updateTask,
-} from "./task.model.js";
-import { parseCommand } from "./helpers/parseCommand.js";
-import { isValidStatus, type StatusType } from "./types/interfaces.js";
+import { createInterface } from 'node:readline/promises';
+import { stdin as input, stdout as output } from 'node:process';
+import { addTask, deleteAllTasks, deleteTask, getTasksData, updateTask } from './task.model.js';
+import { parseCommand } from './helpers/parseCommand.js';
+import { isValidStatus, type StatusType } from './types/interfaces.js';
+
+const MAX_DESC_LENGTH = 1000;
 
 const rl = createInterface({ input, output });
 
 function parseId(arg: string | undefined): number | null {
-  if (arg === undefined || arg === "") return null;
+  if (arg === undefined || arg === '') return null;
   const id = parseInt(arg.trim(), 10);
   if (isNaN(id) || id.toString() !== arg.trim()) return null;
   return id;
@@ -21,14 +17,12 @@ function parseId(arg: string | undefined): number | null {
 
 const commandsList = {
   exit: () => {
-    console.log("bye bye");
+    console.log('bye bye');
     rl.close();
   },
   list: async () => {
     const tasks = await getTasksData();
-    const view = tasks?.map(
-      (task) => `${task.description} (ID: ${task.id}, status: ${task.status})`,
-    );
+    const view = tasks?.map((task) => `${task.description} (ID: ${task.id}, status: ${task.status})`);
     view?.forEach((task, i) => {
       console.log(`${i + 1}. ${task}`);
     });
@@ -44,7 +38,7 @@ const commandsList = {
   },
   add: async (task: string) => {
     const res = await addTask(task);
-    console.log("Task added: " + res.description + " (id: " + res.id + ")");
+    console.log('Task added: ' + res.description + ' (id: ' + res.id + ')');
   },
   delete: async (id: number) => {
     await deleteTask(id);
@@ -60,7 +54,7 @@ const commandsList = {
   },
   deleteAll: async () => {
     await deleteAllTasks();
-    console.log("All tasks are deleted");
+    console.log('All tasks are deleted');
   },
   help: () => {
     console.log(`
@@ -80,84 +74,83 @@ Available commands:
 };
 
 export async function applicationController() {
-  const answer = await rl.question("> ");
+  const answer = await rl.question('> ');
   const [command, ...args] = parseCommand(answer);
 
   switch (command) {
-    case "exit":
+    case 'exit':
       commandsList.exit();
       return false;
 
-    case "list":
+    case 'list':
       {
         const status = args[0];
-        if (status && isValidStatus(status))
-          await commandsList.listByStatus(status);
+        if (status && isValidStatus(status)) await commandsList.listByStatus(status);
         else await commandsList.list();
       }
       break;
 
-    case "add":
-      if (args[0]) await commandsList.add(args[0]);
-      else console.error("You need to describe task");
+    case 'add':
+      if (args[0] && args[0].length < MAX_DESC_LENGTH) await commandsList.add(args[0]);
+      else console.error('You need to describe task');
       break;
 
-    case "delete": {
+    case 'delete': {
       const id = parseId(args[0]);
       if (id === null) {
-        console.error("You need to add ID to delete");
+        console.error('You need to add ID to delete');
         return true;
       }
       await commandsList.delete(id);
       break;
     }
-    case "update": {
+    case 'update': {
       const id = parseId(args[0]);
       if (id === null || !args[1]) {
-        console.error("You need to add ID and description to update task");
+        console.error('You need to add ID and description to update task');
         return true;
       }
-      await commandsList.update(id, args[1]);
+      if (args[1].length < MAX_DESC_LENGTH) await commandsList.update(id, args[1]);
       break;
     }
-    case "mark-done": {
+    case 'mark-done': {
       const idDone = parseId(args[0]);
       if (idDone === null) {
-        console.error("You need to add ID");
+        console.error('You need to add ID');
         return true;
       }
-      await commandsList.mark(idDone, "done");
+      await commandsList.mark(idDone, 'done');
       break;
     }
-    case "mark-todo": {
+    case 'mark-todo': {
       const idTodo = parseId(args[0]);
       if (idTodo === null) {
-        console.error("You need to add ID");
+        console.error('You need to add ID');
         return true;
       }
-      await commandsList.mark(idTodo, "todo");
+      await commandsList.mark(idTodo, 'todo');
       break;
     }
-    case "mark-in-progress": {
+    case 'mark-in-progress': {
       const idProgress = parseId(args[0]);
       if (idProgress === null) {
-        console.error("You need to add ID");
+        console.error('You need to add ID');
         return true;
       }
-      await commandsList.mark(idProgress, "in-progress");
+      await commandsList.mark(idProgress, 'in-progress');
       break;
     }
-    case "delete-all": {
+    case 'delete-all': {
       await commandsList.deleteAll();
       break;
     }
-    case "help": {
+    case 'help': {
       commandsList.help();
       break;
     }
 
     default:
-      console.log("Unknown command");
+      console.log('Unknown command');
   }
   return true;
 }

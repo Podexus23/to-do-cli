@@ -1,8 +1,12 @@
 {
   "name": "to-do-cli",
   "version": "1.0.0",
-  "description": "to do cli client",
+  "description": "A simple task manager CLI",
+  "main": "dist/index.js",
   "homepage": "https://github.com/Podexus23/to-do-cli#readme",
+  "bin": {
+    "task-cli": "./dist/index.js"
+  },
   "bugs": {
     "url": "https://github.com/Podexus23/to-do-cli/issues"
   },
@@ -11,13 +15,25 @@
     "url": "git+https://github.com/Podexus23/to-do-cli.git"
   },
   "license": "ISC",
-  "author": "Podexus",
+  "author": "Podexus23",
   "type": "module",
-  "main": "index.js",
   "scripts": {
+    "prepare": "husky",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "lint": "eslint src --ext .ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format": "prettier --write \"src/**/*.{ts,js,json}\"",
+    "prepublishOnly": "npm run build"
+  },
+  "lint-staged": {
+    "*.{ts,js,json}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -25,7 +41,9 @@
     "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.4.0",
+    "husky": "^9.1.7",
     "jiti": "^2.6.1",
+    "lint-staged": "^16.3.3",
     "nodemon": "^3.1.14",
     "prettier": "^3.8.1",
     "ts-node": "^10.9.2",

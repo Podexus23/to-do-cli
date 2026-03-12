@@ -1,13 +1,7 @@
-//add/ update/ delete / list {type} / mark-type
+#!/usr/bin/env node
 
-/*
- - add mark task with commands(mark-in-progress, mark-done)
- - add list by status(done, todo, in-progress)
-
-*/
-
-import { applicationController } from "./controller.js";
-import { checkTasksFile, getTasksData } from "./task.model.js";
+import { applicationController } from './controller.js';
+import { checkTasksFile, getTasksData } from './task.model.js';
 
 async function main() {
   let isRunning = true;

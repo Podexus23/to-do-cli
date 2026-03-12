@@ -1,6 +1,6 @@
 export function parseCommand(input: string): string[] {
   const args: string[] = [];
-  let current = "";
+  let current = '';
   let inQuotes = false;
 
   for (let i = 0; i < input.length; i++) {
@@ -8,10 +8,10 @@ export function parseCommand(input: string): string[] {
 
     if (char === '"') {
       inQuotes = !inQuotes;
-    } else if (char === " " && !inQuotes) {
+    } else if (char === ' ' && !inQuotes) {
       if (current) {
         args.push(current);
-        current = "";
+        current = '';
       }
     } else {
       current += char;
