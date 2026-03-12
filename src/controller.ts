@@ -1,5 +1,3 @@
-import { createInterface } from 'node:readline/promises';
-import { stdin as input, stdout as output } from 'node:process';
 import { addTask, deleteAllTasks, deleteTask, getTasksData, updateTask } from './task.model.js';
 import { parseCommand } from './helpers/parseCommand.js';
 import { isValidStatus, type StatusType } from './types/interfaces.js';
@@ -7,12 +5,9 @@ import { parseId } from './helpers/parseId.js';
 
 const MAX_DESC_LENGTH = 1000;
 
-const rl = createInterface({ input, output });
-
 const commandsList = {
   exit: () => {
     console.log('bye bye');
-    rl.close();
   },
   list: async () => {
     const tasks = await getTasksData();
@@ -67,8 +62,7 @@ Available commands:
   },
 };
 
-export async function applicationController() {
-  const answer = await rl.question('> ');
+export async function applicationController(answer: string) {
   const [command, ...args] = parseCommand(answer);
 
   switch (command) {

@@ -7,7 +7,7 @@ const TASKS_PATH = path.resolve(nodeOs.homedir(), 'tasks-app', 'data.json');
 const TMP_PATH = TASKS_PATH + '.tmp';
 let tasksData: Task[] = [];
 
-async function saveTasksFile(tasks: Task[]): Promise<void> {
+export async function saveTasksFile(tasks: Task[]): Promise<void> {
   await fs.writeFile(TMP_PATH, JSON.stringify(tasks, null, 2), 'utf-8');
   await fs.rename(TMP_PATH, TASKS_PATH);
 }
