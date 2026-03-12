@@ -45,7 +45,8 @@ export async function getTasksData() {
     tasksData = isTasks(parsedJson) ? parsedJson : tasksData;
     return tasksData;
   } catch (error) {
-    if (error instanceof Error) console.log(error.message);
+    if (error instanceof Error)
+      throw new Error(`Model: ${error.message}`, { cause: error });
     else throw new Error("Unknown app error", { cause: error });
   }
 }
@@ -56,7 +57,8 @@ export async function deleteTask(id: number) {
     await fs.writeFile(TASKS_PATH, JSON.stringify(tasksData));
     return tasksData;
   } catch (error) {
-    if (error instanceof Error) console.log(error.message);
+    if (error instanceof Error)
+      throw new Error(`Model: ${error.message}`, { cause: error });
     else throw new Error("Unknown app error", { cause: error });
   }
 }
@@ -80,7 +82,8 @@ export async function updateTask(
     });
     await fs.writeFile(TASKS_PATH, JSON.stringify(tasksData));
   } catch (error) {
-    if (error instanceof Error) console.log(error.message);
+    if (error instanceof Error)
+      throw new Error(`Model: ${error.message}`, { cause: error });
     else throw new Error("Unknown app error", { cause: error });
   }
 }
@@ -89,7 +92,9 @@ export async function deleteAllTasks() {
   try {
     tasksData = [];
     await fs.writeFile(TASKS_PATH, JSON.stringify(tasksData));
-  } catch {
-    console.error("Smth went wrong");
+  } catch (error: unknown) {
+    if (error instanceof Error)
+      throw new Error(`Model: ${error.message}`, { cause: error });
+    else throw new Error("Unknown app error", { cause: error });
   }
 }

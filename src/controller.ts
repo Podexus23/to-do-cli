@@ -62,6 +62,21 @@ const commandsList = {
     await deleteAllTasks();
     console.log("All tasks are deleted");
   },
+  help: () => {
+    console.log(`
+Available commands:
+  add "<description>"                 - Add a new task
+  update <id> "<new description>"      - Update a task's description
+  delete <id>                          - Delete a task
+  delete-all                          - Delete all tasks
+  mark-in-progress <id>                - Mark a task as in progress
+  mark-todo <id>                       - Mark a task as todo
+  mark-done <id>                        - Mark a task as done
+  list [status]                         - List tasks (status: todo, in-progress, done)
+  help                                   - Show this help message
+  exit                                   - Exit the application
+      `);
+  },
 };
 
 export async function applicationController() {
@@ -134,6 +149,10 @@ export async function applicationController() {
     }
     case "delete-all": {
       await commandsList.deleteAll();
+      break;
+    }
+    case "help": {
+      commandsList.help();
       break;
     }
 
