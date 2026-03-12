@@ -91,8 +91,13 @@ export async function applicationController() {
       break;
 
     case 'add':
-      if (args[0] && args[0].length < MAX_DESC_LENGTH) await commandsList.add(args[0]);
-      else console.error('You need to describe task');
+      if (!args[0]) {
+        console.error('You need to describe task');
+      } else if (args[0].length > MAX_DESC_LENGTH) {
+        console.error(`Description is too long (max ${MAX_DESC_LENGTH} characters)`);
+      } else {
+        await commandsList.add(args[0]);
+      }
       break;
 
     case 'delete': {
@@ -106,11 +111,16 @@ export async function applicationController() {
     }
     case 'update': {
       const id = parseId(args[0]);
-      if (id === null || !args[1]) {
+      const newDesc = args[1];
+      if (id === null || !newDesc) {
         console.error('You need to add ID and description to update task');
         return true;
       }
-      if (args[1].length < MAX_DESC_LENGTH) await commandsList.update(id, args[1]);
+      if (newDesc.length > MAX_DESC_LENGTH) {
+        console.error(`Description is too long (max ${MAX_DESC_LENGTH} characters)`);
+        return true;
+      }
+      await commandsList.update(id, newDesc);
       break;
     }
     case 'mark-done': {

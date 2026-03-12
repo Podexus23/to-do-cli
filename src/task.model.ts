@@ -36,7 +36,7 @@ export async function checkTasksFile() {
       console.log('Creating file...');
       const dbDir = path.dirname(TASKS_PATH);
       await fs.mkdir(dbDir, { recursive: true });
-      await fs.writeFile(TASKS_PATH, JSON.stringify(tasksData));
+      await saveTasksFile(tasksData);
     } else {
       console.error('Unexpected error while checking tasks file:', error);
       throw error;
