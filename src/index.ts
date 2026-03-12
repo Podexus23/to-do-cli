@@ -1,10 +1,8 @@
 //add/ update/ delete / list {type} / mark-type
 
 /*
- 1. add task +
- 1.1 show all tasks +
- 2. remove task
- 3. remove all
+ - add mark task with commands(mark-in-progress, mark-done)
+ - add list by status(done, todo, in-progress)
 
 */
 

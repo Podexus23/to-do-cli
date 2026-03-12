@@ -61,15 +61,17 @@ export async function deleteTask(id: number) {
   }
 }
 
-export async function updateTask(id: number, data: string) {
+export async function updateTask(
+  id: number,
+  data: { description?: string; status?: string },
+) {
   try {
     tasksData = tasksData.map((task) => {
       if (task.id === id) {
         return {
           ...task,
           ...{
-            description: data,
-            status: "todo",
+            ...data,
             updatedAt: new Date().toISOString(),
           },
         };
@@ -80,5 +82,13 @@ export async function updateTask(id: number, data: string) {
   } catch (error) {
     if (error instanceof Error) console.log(error.message);
     else throw new Error("Unknown app error", { cause: error });
+  }
+}
+
+export async function deleteAllTasks() {
+  try {
+    await fs.writeFile(TASKS_PATH, JSON.stringify([]));
+  } catch {
+    console.error("Smth went wrong");
   }
 }

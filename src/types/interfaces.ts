@@ -22,3 +22,10 @@ export function isTask(obj: unknown): obj is Task {
 export function isTasks(data: unknown): data is Task[] {
   return Array.isArray(data) && data.every(isTask);
 }
+
+export const validStatuses = ["done", "todo", "in-progress"] as const;
+export type StatusType = (typeof validStatuses)[number];
+
+export function isValidStatus(status: string): status is StatusType {
+  return validStatuses.includes(status as StatusType);
+}
