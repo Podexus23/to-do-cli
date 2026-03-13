@@ -59,41 +59,47 @@ describe('module functions', () => {
     });
   });
 
-  it('add new task correctly', async () => {
-    const result = await addTask(mockData);
+  describe('addTask', () => {
+    it('add new task correctly', async () => {
+      const result = await addTask(mockData);
 
-    expect(result.description).toBe(mockData);
-    expect(result.id).toBe(1);
-    expect(result.status).toBe('todo');
-    expect(result.createdAt).toBeDefined();
-    expect(result.updatedAt).toBeDefined();
+      expect(result.description).toBe(mockData);
+      expect(result.id).toBe(1);
+      expect(result.status).toBe('todo');
+      expect(result.createdAt).toBeDefined();
+      expect(result.updatedAt).toBeDefined();
 
-    const expectedTasks = [result];
-    const expectedJson = JSON.stringify(expectedTasks, null, 2);
-    expect(fs.writeFile).toHaveBeenCalledWith(expect.stringContaining('data.json.tmp'), expectedJson, 'utf-8');
-    expect(fs.rename).toHaveBeenCalled();
+      const expectedTasks = [result];
+      const expectedJson = JSON.stringify(expectedTasks, null, 2);
+      expect(fs.writeFile).toHaveBeenCalledWith(expect.stringContaining('data.json.tmp'), expectedJson, 'utf-8');
+      expect(fs.rename).toHaveBeenCalled();
+    });
   });
 
-  it(`checkTaskFile: Console log that file exists if it's already created`, async () => {
-    await checkTasksFile();
+  describe('checkTaskFile', () => {
+    it(`checkTaskFile: Console log that file exists if it's already created`, async () => {
+      await checkTasksFile();
 
-    expect(fs.access).toHaveBeenCalled();
-    expect(consoleOutput[0]).toContain('Data file exists');
-  });
+      expect(fs.access).toHaveBeenCalled();
+      expect(consoleOutput[0]).toContain('Data file exists');
+    });
 
-  it(`checkTaskFile: Create file if it's not exist`, async () => {
-    const enoentError = Object.assign(new Error('File not found'), { code: 'ENOENT' });
-    vi.mocked(fs.access).mockRejectedValueOnce(enoentError);
+    it(`checkTaskFile: Create file if it's not exist`, async () => {
+      const enoentError = Object.assign(new Error('File not found'), { code: 'ENOENT' });
+      vi.mocked(fs.access).mockRejectedValueOnce(enoentError);
 
-    await checkTasksFile();
+      await checkTasksFile();
 
-    expect(consoleOutput[0]).toContain('Data file is not found');
-    expect(fs.mkdir).toHaveBeenCalled();
-  });
-  it(`checkTaskFile: should pass other errors`, async () => {
-    const enoentError = new Error('File not found');
-    vi.mocked(fs.access).mockRejectedValueOnce(enoentError);
+      expect(consoleOutput[0]).toContain('Data file is not found');
+      expect(fs.mkdir).toHaveBeenCalled();
+    });
+    it(`checkTaskFile: should pass other errors`, async () => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const enoentError = Object.assign(new Error('File not found'), { code: 'test' });
+      vi.mocked(fs.access).mockRejectedValueOnce(enoentError);
 
-    await expect(checkTasksFile()).rejects.toThrow('File not found');
+      await expect(checkTasksFile()).rejects.toThrow('File not found');
+      expect(errorSpy).toHaveBeenCalledWith('Unexpected error while checking tasks file:', enoentError);
+    });
   });
 });
