@@ -213,14 +213,12 @@ describe('module functions', () => {
       expect(previousUpdateTime).not.toBe(tasksData.find((task) => task.id === 1)?.updatedAt);
     });
 
-    it.each([
-      { name: 'Error object', error: new Error('read error'), expected: 'Model: read error' },
-      { name: 'non-Error', error: 'string error', expected: 'Unknown app error' },
-    ])('should handle $name', async ({ error, expected }) => {
-      vi.mocked(fs.readFile).mockRejectedValueOnce(error);
-      await expect(getTasksData()).rejects.toThrow(expected);
+    it('should throw and wrap error if saveTasksFile fails', async () => {
+      vi.mocked(fs.writeFile).mockRejectedValueOnce(new Error('Disk full'));
+      await expect(updateTask(1, { description: 'new' })).rejects.toThrow('Model: Disk full');
     });
   });
+
   describe('deleteAllTasks', () => {
     const task1: Task = { id: 1, description: 'Task 1', status: 'todo', createdAt: '', updatedAt: '' };
     const task2: Task = { id: 2, description: 'Task 2', status: 'todo', createdAt: '', updatedAt: '' };
@@ -235,10 +233,12 @@ describe('module functions', () => {
       vi.mocked(fs.rename).mockReset();
     });
 
-    it('Delete all tasks from array', async () => {
+    it('clears tasksData and calls saveTasksFile', async () => {
       await deleteAllTasks();
 
       expect(tasksData).toEqual([]);
+      expect(fs.writeFile).toHaveBeenCalledWith(expect.stringContaining('data.json.tmp'), '[]', 'utf-8');
+      expect(fs.rename).toHaveBeenCalled();
     });
   });
 });

@@ -17,43 +17,56 @@ describe('interface validators', () => {
   };
 
   describe('isTask', () => {
-    it('Return true if object is correct', () => {
-      const res = isTask(task);
-      expect(res).toBe(true);
+    it('returns true for valid task object', () => {
+      expect(isTask(task)).toBe(true);
     });
 
-    it('return false if Task is not an object', () => {
-      const res = isTask(13);
-      expect(res).toBe(false);
+    it('returns false for non-object', () => {
+      expect(isTask(13)).toBe(false);
+      expect(isTask(null)).toBe(false);
+      expect(isTask('string')).toBe(false);
     });
 
-    it('return false if Task is misses fields incorrect', () => {
-      const res = isTask(taskFake);
-      expect(res).toBe(false);
+    it('returns false when required fields are missing or invalid', () => {
+      expect(isTask(taskFake)).toBe(false);
+    });
+
+    it('returns false for object with invalid status', () => {
+      const invalidStatusTask = { ...task, status: 'invalid-status' };
+      expect(isTask(invalidStatusTask)).toBe(false);
     });
   });
 
   describe('isTasks', () => {
-    it('return false if one of tasks is incorrect', () => {
-      const result = isTasks([task, taskFake]);
-      expect(result).toBe(false);
+    it('returns true for empty array', () => {
+      expect(isTasks([])).toBe(true);
     });
 
-    it('return false if one of tasks is incorrect', () => {
-      const result = isTasks([task, taskFake]);
-      expect(result).toBe(false);
+    it('returns true for array of valid tasks', () => {
+      expect(isTasks([task])).toBe(true);
+    });
+
+    it('returns false if one of tasks is invalid', () => {
+      expect(isTasks([task, taskFake])).toBe(false);
+    });
+
+    it('returns false for non-array', () => {
+      expect(isTasks(null)).toBe(false);
+      expect(isTasks({})).toBe(false);
     });
   });
 
   describe('isValidStatus', () => {
-    it('return false on incorrect status', () => {
-      const result = isValidStatus(taskFake.status);
-      expect(result).toBe(false);
+    it('returns false for invalid status', () => {
+      expect(isValidStatus(taskFake.status)).toBe(false);
+      expect(isValidStatus('')).toBe(false);
+      expect(isValidStatus('invalid')).toBe(false);
     });
 
-    it('return true if on correct status', () => {
-      const result = isValidStatus(task.status);
-      expect(result).toBe(true);
+    it('returns true for each valid status', () => {
+      expect(isValidStatus('todo')).toBe(true);
+      expect(isValidStatus('done')).toBe(true);
+      expect(isValidStatus('in-progress')).toBe(true);
     });
   });
 });

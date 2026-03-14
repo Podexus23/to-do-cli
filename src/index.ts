@@ -2,7 +2,7 @@
 
 import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
-import { applicationController } from './controller.js';
+import { applicationController } from './controller/controller.js';
 import { checkTasksFile, getTasksData } from './task.model.js';
 
 const rl = createInterface({ input, output });
