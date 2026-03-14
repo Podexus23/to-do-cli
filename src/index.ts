@@ -18,10 +18,11 @@ async function main() {
       const answer = await rl.question('> ');
       if ((await applicationController(answer)) === false) isRunning = false;
     }
-    rl.close();
   } catch (error) {
     if (error instanceof Error) console.error(`Error: ${error.message}`);
     else console.error('Unknown error');
+  } finally {
+    rl.close();
   }
 }
 

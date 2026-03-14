@@ -1,9 +1,14 @@
 import { parseId } from './parseId.js';
 
 describe('parseId', () => {
-  it('returns number for valid integer string', () => {
+  it('returns number for valid positive integer string', () => {
     expect(parseId('123')).toBe(123);
-    expect(parseId('0')).toBe(0);
+    expect(parseId('1')).toBe(1);
+  });
+
+  it('returns null for zero or negative', () => {
+    expect(parseId('0')).toBe(null);
+    expect(parseId('-1')).toBe(null);
   });
 
   it('returns null for undefined or empty string', () => {
