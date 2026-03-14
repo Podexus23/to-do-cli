@@ -5,11 +5,16 @@ import { isTasks, type Task, type StatusType } from './types/interfaces.js';
 
 const TASKS_PATH = path.resolve(nodeOs.homedir(), 'tasks-app', 'data.json');
 const TMP_PATH = TASKS_PATH + '.tmp';
-let tasksData: Task[] = [];
+export let tasksData: Task[] = [];
 
 export async function saveTasksFile(tasks: Task[]): Promise<void> {
-  await fs.writeFile(TMP_PATH, JSON.stringify(tasks, null, 2), 'utf-8');
-  await fs.rename(TMP_PATH, TASKS_PATH);
+  try {
+    await fs.writeFile(TMP_PATH, JSON.stringify(tasks, null, 2), 'utf-8');
+    await fs.rename(TMP_PATH, TASKS_PATH);
+  } catch (error) {
+    if (error instanceof Error) throw new Error(`Model: ${error.message}`, { cause: error });
+    else throw new Error('Unknown app error', { cause: error });
+  }
 }
 
 export async function addTask(data: string) {
